@@ -1,0 +1,9 @@
+bin/
+lib/
+obj/
+build/
+3rdparty/
+run.sh
+test_only*.cpp
+.clangd/
+compile_commands.json

@@ -1,0 +1,18 @@
+---
+# clang-format version: 10.0
+Language: Cpp
+BasedOnStyle: Google
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: MultiLine
+KeepEmptyLinesAtTheStartOfBlocks: true
+DerivePointerAlignment: false
+BinPackArguments: false
+BinPackParameters: false
+SpaceAfterCStyleCast: true
+Standard: c++17

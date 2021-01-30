@@ -1,0 +1,8 @@
+^\.clangd$
+^\.git$
+^\.github$
+^GPATH$
+^GRTAGS$
+^GTAGS$
+\.o$
+\.d$
