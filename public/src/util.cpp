@@ -44,7 +44,7 @@ Json::Value ParseJsonString(const std::string& content) {
   Json::CharReaderBuilder builder;
   Json::CharReader* reader = builder.newCharReader();
   const char* begin = content.data();
-  const char* end = begin + content.size();
+  const char* end = begin + content.length();
   if (!reader->parse(begin, end, &root, &error)) {
     LOG(ERROR) << "failed to parse json string, error: " << error;
     root = Json::Value();
@@ -106,11 +106,11 @@ std::vector<std::string> ListDirectory(const std::string& dirname,
 }
 
 std::string CalcMD5(const std::string& content) {
-  unsigned char md5[MD5_DIGEST_LENGTH];
-  MD5((unsigned char*) content.data(), content.size(), md5);
-  std::string result(MD5_DIGEST_LENGTH * 2, 0);
-  for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
-    std::sprintf(&result[2 * i], "%02x", md5[i]);
+  std::array<unsigned char, MD5_DIGEST_LENGTH> md5;
+  MD5((unsigned char*) content.data(), content.size(), md5.data());
+  std::string result;
+  for (const auto& c : md5) {
+    result += (boost::format("%02x") % int(c)).str();
   }
   return result;
 }

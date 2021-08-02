@@ -1,5 +1,5 @@
-#ifndef PUBLIC_UTIL_H_
-#define PUBLIC_UTIL_H_
+#ifndef CPP_TEMPLATE_UTIL_H_
+#define CPP_TEMPLATE_UTIL_H_
 
 #include "common.h"
 
@@ -8,6 +8,9 @@ void MakeDirsForFile(const std::string& path);
 
 // 一次性读取文件所有的内容，如打开失败返回空字符串
 std::string ReadFile(const std::string& file, bool is_binary = false);
+
+// 按行读取文件内容, 需要T重载运算符: operator>>
+template <class T> std::vector<T> ReadLines(std::string& file);
 
 // 一次性写入文件的所有内容
 bool WriteFile(const std::string& file, const char* data, const int len);
@@ -30,16 +33,8 @@ void WriteJsonFile(const Json::Value& root, const std::string& json_file);
 std::string ExecShell(const std::string& cmd);
 
 // vector to string, format控制单个value的格式
-template <class Dtype>
-std::string ToString(const std::vector<Dtype>& values,
-                     const std::string& format) {
-  std::vector<std::string> string_values;
-  for (size_t i = 0; i < values.size(); ++i) {
-    string_values.push_back((boost::format(format) % values[i]).str());
-  }
-  std::string result = boost::algorithm::join(string_values, ", ");
-  return std::string("[") + result + std::string("]");
-}
+template <class T>
+std::string ToString(const std::vector<T>& values, const std::string& format);
 
 // 返回目录中所有的文件和子目录, 结果做升序排列
 std::vector<std::string> ListDirectory(
@@ -62,4 +57,25 @@ int64_t GetBytesFromString(const std::string& content);
 // 将bytes转换成利于人读的字符串
 std::string GetBytesString(int64_t bytes);
 
-#endif  // PUBLIC_UTIL_H_
+//////////////////////////////// implementation ////////////////////////////////
+
+template <class T> std::vector<T> ReadLines(std::string& file) {
+  std::ifstream infile(file);
+  if (!infile.is_open()) { return std::vector<T>{}; }
+  std::vector<T> samples;
+  T sample;
+  while (infile >> sample) { samples.push_back(sample); }
+  return samples;
+}
+
+template <class T>
+std::string ToString(const std::vector<T>& values, const std::string& format) {
+  std::vector<std::string> string_values;
+  for (size_t i = 0; i < values.size(); ++i) {
+    string_values.push_back((boost::format(format) % values[i]).str());
+  }
+  std::string result = boost::algorithm::join(string_values, ", ");
+  return std::string("[") + result + std::string("]");
+}
+
+#endif  // CPP_TEMPLATE_UTIL_H_

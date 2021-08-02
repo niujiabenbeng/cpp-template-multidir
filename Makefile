@@ -2,16 +2,22 @@
 
 SUBMODULE := public
 
-all:
-	for MODULE in $(SUBMODULE); do $(MAKE) -C $$MODULE all; done
+# 这里可以选择用哪个编译器
+export CC = clang++
 
 lib:
 	for MODULE in $(SUBMODULE); do $(MAKE) -C $$MODULE lib; done
 
+all:
+	for MODULE in $(SUBMODULE); do $(MAKE) -C $$MODULE all; done
+
 tools:
 	for MODULE in $(SUBMODULE); do $(MAKE) -C $$MODULE tools; done
+
+tests:
+	for MODULE in $(SUBMODULE); do $(MAKE) -C $$MODULE tests; done
 
 clean:
 	for MODULE in $(SUBMODULE); do $(MAKE) -C $$MODULE clean; done
 
-.PHONY: all lib tools clean
+.PHONY: all lib tools tests clean

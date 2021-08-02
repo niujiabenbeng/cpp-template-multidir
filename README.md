@@ -9,8 +9,15 @@
 每一个子目录是一个小工程, 其目录结构与`cpp_template`一致. 每一个子目录有自己的
 Makefile, 主目录的Makefile调用子目录的Makefile来完成编译任务.
 
-#### 生成compile_commands.json
+为了简便起见, 不提供CMakeLists.txt, 如果需要支持cmake, 请参考`cpp_template`.
 
-``` shell
-bear make -ik all -j4
-```
+
+### Useful tools
+
+1. 生成`compile_commands.json`: `bear make -ir -j4 tools tests`
+
+2. auto-formatting: `clang-format -i include/* src/* tools/* unittest/*`
+
+3. linting: `run-clang-tidy.py`
+
+注意: `run-clang-tidy.py`处理的是从`compile_commands.json`中的文件.

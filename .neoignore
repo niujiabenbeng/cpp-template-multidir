@@ -1,8 +1,8 @@
 ^\.clangd$
 ^\.git$
 ^\.github$
-^GPATH$
-^GRTAGS$
-^GTAGS$
+^\.cache$
+^build$
 \.o$
 \.d$
+

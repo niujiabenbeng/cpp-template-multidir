@@ -2,9 +2,11 @@ bin/
 lib/
 obj/
 build/
+data/
 3rdparty/
 run.sh
-test_only*.cpp
 .clangd/
 .cache/
 compile_commands.json
+compile_flags.txt
+.#*

@@ -1,5 +1,5 @@
-#ifndef PUBLIC_COMMON_H_
-#define PUBLIC_COMMON_H_
+#ifndef CPP_TEMPLATE_COMMON_H_
+#define CPP_TEMPLATE_COMMON_H_
 
 // convert macro to string
 #define STRINGIFY(m) #m
@@ -28,6 +28,14 @@
   classname(classname&&) = default;   \
   classname& operator=(classname&&) = default
 #endif  // DEFAULT_MOVE_ASIGN
+
+#ifndef PLAIN_OLD_DATA_CLASS
+#define PLAIN_OLD_DATA_CLASS(classname) \
+  classname() = default;                \
+  DEFAULT_COPY_ASIGN(classname);        \
+  DEFAULT_MOVE_ASIGN(classname);        \
+  ~classname() = default;
+#endif  // PLAIN_OLD_DATA_CLASS
 
 #ifndef ATOMIC_GET
 #define ATOMIC_GET(mutex_, value)           \
@@ -64,6 +72,7 @@
 #include <glog/logging.h>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -72,4 +81,4 @@
 
 namespace bf = boost::filesystem;  // NOLINT
 
-#endif  // PUBLIC_COMMON_H_
+#endif  // CPP_TEMPLATE_COMMON_H_
