@@ -36,18 +36,23 @@ TEST(JsonTest, json) {  // NOLINT
   }
 }
 
-TEST(UnitDurationTest, unitduration) {  // NOLINT
-  auto duration = UnitDuration(std::chrono::seconds(16));
-  auto duration2 = UnitDuration(duration.string(false));
-  auto duration3 = UnitDuration(duration.string(true));
-  EXPECT_TRUE(duration.value == duration2.value);
-  EXPECT_TRUE(duration.value == duration3.value);
-}
-
 TEST(DateTimeTest, datetime) {  // NOLINT
   auto dt = DateTime().seconds();
   auto dt2 = DateTime(dt.string());
   EXPECT_TRUE(dt.value == dt2.value);
+}
+
+TEST(BytesTest, bytes) {  // NOLINT
+  EXPECT_EQ(GetBytesByString("512K"), GetBytesByString("0.5MB"));
+  EXPECT_EQ(GetBytesByString("1024K"), GetBytesByString("1MB"));
+  EXPECT_TRUE(GetBytesString(GetBytesByString("1M")) == "1.00 MB");
+  EXPECT_TRUE(GetBytesString(GetBytesByString("0.5M")) == "512.00 KB");
+}
+
+TEST(SecondsTest, seconds) {  // NOLINT
+  EXPECT_EQ(GetSecondsByString("24h"), GetSecondsByString("1day"));
+  EXPECT_EQ(GetSecondsByString("12h"), GetSecondsByString("12 hour"));
+  EXPECT_TRUE(GetSecondsString(GetSecondsByString("0.5D")) == "12.00 hour");
 }
 
 int main(int argc, char* argv[]) {

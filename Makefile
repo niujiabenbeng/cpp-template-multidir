@@ -3,7 +3,7 @@
 SUBMODULE := public
 
 # 这里可以选择用哪个编译器
-export CC = clang++
+export GG = clang++
 
 lib:
 	for MODULE in $(SUBMODULE); do $(MAKE) -C $$MODULE lib; done

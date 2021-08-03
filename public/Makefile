@@ -3,23 +3,23 @@
 ###  http://hiltmon.com/blog/2013/07/03/a-simple-c-plus-plus-project-structure
 ################################################################################
 
-CC ?= clang++
+GG ?= clang++
 CFLAGS := -g -Wall -fpic -O3 -std=c++17
 
 INCDIR   := include
 SRCDIR   := src
 TOOLSDIR := tools
-TESTSDIR := unittest
+TESTSDIR := unittests
 BUILDDIR := build
 PROJECT  := public
 
 # 这里添加第三方库
-INCLUDE := ../3rdparty/boost/include \
-           ../3rdparty/opencv/include \
-           ../3rdparty/date/include
-LIBRARY := ../3rdparty/boost/lib \
-           ../3rdparty/opencv/lib \
-           ../3rdparty/date/lib
+INCLUDE := ./3rdparty/boost/include \
+           ./3rdparty/opencv/include \
+           ./3rdparty/date/include
+LIBRARY := ./3rdparty/boost/lib \
+           ./3rdparty/opencv/lib \
+           ./3rdparty/date/lib
 LIBS    := dl m z rt glog gflags curl crypto jsoncpp pthread date-tz \
            opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc \
            boost_system boost_filesystem
@@ -66,16 +66,16 @@ tests: $(TGT_TESTS)
 all: $(TGT_SRC) $(TGT_TOOLS)
 
 $(TGT_SRC): $(OBJ_SRC)
-	$(CC) -shared -o $@ $^ $(LIBRARY) $(LIBS)
+	$(GG) -shared -o $@ $^ $(LIBRARY) $(LIBS)
 
 $(TGT_TOOLS): %.bin : %.o $(OBJ_SRC)
-	$(CC) -o $@ $^ $(LIBRARY) $(LIBS)
+	$(GG) -o $@ $^ $(LIBRARY) $(LIBS)
 
 $(TGT_TESTS): %.bin : %.o $(OBJ_SRC)
-	$(CC) -o $@ $^ $(LIBRARY) $(LIBS) -lgtest
+	$(GG) -o $@ $^ $(LIBRARY) $(LIBS) -lgtest
 
 $(OBJ_SRC) $(OBJ_TOOLS) $(OBJ_TESTS): $(BUILDDIR)/%.o : %.cpp
-	$(CC) $(CFLAGS) -MP -MMD -c -o $@ $< $(INCLUDE)
+	$(GG) $(CFLAGS) -MP -MMD -c -o $@ $< $(INCLUDE)
 
 ifneq ($(filter clean, $(MAKECMDGOALS)), clean)
     # 这里'-'表示忽略错误.

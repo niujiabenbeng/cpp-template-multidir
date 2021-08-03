@@ -4,6 +4,36 @@
 
 #include "common.h"
 
+using UnitValuePair = std::pair<std::string, int64_t>;
+using UnitValueVec = std::vector<UnitValuePair>;
+
+static int64_t ParseUnitString(std::string content, const UnitValueVec& map) {
+  boost::algorithm::to_lower(content);
+  for (const auto& pair : map) {
+    if (boost::algorithm::ends_with(content, pair.first)) {
+      auto length = content.length() - pair.first.length();
+      auto head = content.substr(0, length);
+      auto amount = std::atof(head.c_str()) * pair.second;
+      return int64_t(std::round(amount));
+    }
+  }
+  LOG(ERROR) << "Unknown format: " << content;
+  return -1;
+}
+
+static std::string DumpUnitString(int64_t value, const UnitValueVec& map) {
+  for (size_t i = 0; i < map.size() - 1; ++i) {
+    if (value >= map[i].second) {
+      auto amount = float(value) / float(map[i].second);
+      return (boost::format("%.2f %s") % amount % map[i].first).str();
+    }
+  }
+  auto amount = float(value) / float(map.back().second);
+  return (boost::format("%.2f %s") % amount % map.back().first).str();
+}
+
+//////////////////////////////// implementation ////////////////////////////////
+
 void MakeDirsForFile(const std::string& path) {
   auto dirname = boost::filesystem::absolute(path).parent_path();
   if (!dirname.empty() && !boost::filesystem::exists(dirname)) {
@@ -148,37 +178,56 @@ int64_t GetFileSize(const std::string& path) {
   return -1;
 }
 
-int64_t GetBytesFromString(const std::string& content) {
-  auto lower = boost::algorithm::to_lower_copy(content);
+int64_t GetBytesByString(std::string content) {
   // clang-format off
-  std::vector<std::pair<std::string, int>> unit_value_vec = {
-    {"b",    1},
-    {"k",    1024},
-    {"kb",   1024},
-    {"m",    1024 * 1024},
-    {"mb",   1024 * 1024},
-    {"g",    1024 * 1024 * 1024},
-    {"gb",   1024 * 1024 * 1024}
+  const UnitValueVec map = {
+    // 算法匹配最前面的pair, 所以这里顺序很重要
+    {"kb", 1024},
+    {"mb", 1024*1024},
+    {"gb", 1024*1024*1024},
+    {"b", 1},
+    {"k", 1024},
+    {"m", 1024*1024},
+    {"g", 1024*1024*1024},
   };
   // clang-format on
-  for (const auto& pair : unit_value_vec) {
-    if (boost::algorithm::ends_with(lower, pair.first)) {
-      auto head = lower.substr(0, lower.length() - pair.first.length());
-      return static_cast<int64_t>(std::atof(head.c_str()) * pair.second);
-    }
-  }
-  LOG(ERROR) << "Unknown format: " << content;
-  return -1;
+  return ParseUnitString(std::move(content), map);
 }
 
 std::string GetBytesString(int64_t bytes) {
-  float amount = std::abs(bytes);
-  std::string unit = "B";
   // clang-format off
-  if (unit == "B"  && amount > 1024) { amount /= 1024; unit = "KB"; }
-  if (unit == "KB" && amount > 1024) { amount /= 1024; unit = "MB"; }
-  if (unit == "MB" && amount > 1024) { amount /= 1024; unit = "GB"; }
-  if (bytes < 0) { amount *= -1.0; }
+  const UnitValueVec map = {
+    // 算法匹配最前面的pair, 所以这里顺序很重要
+    {"GB", 1024*1024*1024},
+    {"MB", 1024*1024},
+    {"KB", 1024},
+    {"B", 1},
+  };
   // clang-format on
-  return (boost::format("%.2f %s") % amount % unit).str();
+  return DumpUnitString(bytes, map);
+}
+
+int64_t GetSecondsByString(std::string content) {
+  // clang-format off
+  const UnitValueVec map =  {
+    {"s", 1},         {"sec",  1},
+    {"m", 60},        {"min",  60},
+    {"h", 60*60},     {"hour", 60*60},
+    {"d", 24*60*60},  {"day",  24*60*60}
+  };
+  // clang-format on
+  return ParseUnitString(std::move(content), map);
+}
+
+std::string GetSecondsString(int64_t seconds) {
+  // clang-format off
+  const UnitValueVec map =  {
+    // 算法匹配最前面的pair, 所以这里顺序很重要
+    {"day",  24*60*60},
+    {"hour", 60*60},
+    {"min",  60},
+    {"sec",  1}
+  };
+  // clang-format on
+  return DumpUnitString(seconds, map);
 }

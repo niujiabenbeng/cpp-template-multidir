@@ -102,6 +102,8 @@ class Timer {
   int count_ = 0;
 };
 
+//////////////////////////// class FrequencyCounter ////////////////////////////
+
 class FrequencyCounter {
  public:
   using SystemClock = std::chrono::system_clock;
@@ -129,18 +131,7 @@ class FrequencyCounter {
   int count_{0};
 };
 
-class UnitDuration {
- public:
-  using Duration = std::chrono::system_clock::duration;
-  using SecondType = std::chrono::duration<float>;
-
-  PLAIN_OLD_DATA_CLASS(UnitDuration);
-  explicit UnitDuration(Duration d) : value(d) {}
-  explicit UnitDuration(const std::string& content);
-  std::string string(bool short_unit = false) const;
-
-  Duration value{Duration::zero()};  // NOLINT
-};
+//////////////////////////////// class DateTime ////////////////////////////////
 
 class DateTime {
  public:
@@ -150,6 +141,7 @@ class DateTime {
 
   PLAIN_OLD_DATA_CLASS(DateTime);
   explicit DateTime(TimePoint t) : value(t) {}
+  explicit DateTime(Duration d) : value(TimePoint(d)) {}
   explicit DateTime(const std::string& content) {
     date::local_time<Duration> local_time;
     std::stringstream ss(content);
@@ -158,12 +150,18 @@ class DateTime {
     value = date::current_zone()->to_sys(local_time);
   }
 
+  // 输出: 2021-08-02 23:15:34.132548068
+  // 0~23: 2021-08-02 23:15:34.132
+  // 0~19: 2021-08-02 23:15:34
+  // 0~10: 2021-08-02
   std::string string() const {
     std::stringstream ss;
     auto zoned = date::make_zoned(date::current_zone(), value);
     date::to_stream(ss, "%Y-%m-%d %H:%M:%S", zoned);
-    return ss.str().substr(0, 19);
+    return ss.str();
   }
+
+  // 这里展示floor的用法
   DateTime seconds() const {
     using std::chrono::floor;
     using std::chrono::seconds;

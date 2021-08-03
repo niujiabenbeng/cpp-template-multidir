@@ -50,12 +50,26 @@ int64_t GetAvailableSpace(const std::string& path);
 // 只考虑普通文件和目录, 不包括链接等其他形式的文件
 int64_t GetFileSize(const std::string& path);
 
-// 通过字符串计算字节数, 支持的单位包括: b, k, m, g
-// 不区分大小写, 支持小数, 比如: "1.5k", "0.3G"
-int64_t GetBytesFromString(const std::string& content);
+// 通过字符串计算字节数, 支持的单位包括: b, k{b}, m{b}, g{b}
+// 不区分大小写, 支持小数, 比如: "1.5k", "0.3G", "32 KB"
+int64_t GetBytesByString(std::string content);
 
 // 将bytes转换成利于人读的字符串
 std::string GetBytesString(int64_t bytes);
+
+// 通过字符串计算秒数, 支持的单位包括: s{ec}, m{in}, h{our}, d{ay}
+// 不区分大小写, 支小持数, 比如: "1.5h", "0.3D", "24 hour"
+int64_t GetSecondsByString(std::string content);
+
+// 将seconds转换成利于认读的字符串
+std::string GetSecondsString(int64_t seconds);
+
+// vector -> string, converter为: ToString(T)
+template <class T> std::string ToString(const std::vector<T>& values);
+
+// vector -> string, 显式提供converter
+template <class T, class C>
+std::string ToString(const std::vector<T>& values, C converter);
 
 //////////////////////////////// implementation ////////////////////////////////
 
@@ -68,14 +82,37 @@ template <class T> std::vector<T> ReadLines(std::string& file) {
   return samples;
 }
 
-template <class T>
-std::string ToString(const std::vector<T>& values, const std::string& format) {
+template <class T, class C>
+std::string ToString(const std::vector<T>& values, C converter) {
   std::vector<std::string> string_values;
   for (size_t i = 0; i < values.size(); ++i) {
-    string_values.push_back((boost::format(format) % values[i]).str());
+    string_values.push_back(converter(values[i]));
   }
   std::string result = boost::algorithm::join(string_values, ", ");
   return std::string("[") + result + std::string("]");
+}
+
+inline std::string ToString(char value) {
+  return (boost::format("%d") % int(value)).str();
+}
+
+inline std::string ToString(int value) {
+  return (boost::format("%d") % value).str();
+}
+
+inline std::string ToString(float value) {
+  return (boost::format("%.2f") % value).str();
+}
+
+inline std::string ToString(double value) {
+  return (boost::format("%.2f") % value).str();
+}
+
+inline std::string ToString(const std::string& value) { return value; }
+
+template <class T> std::string ToString(const std::vector<T>& values) {
+  auto converter = [](const T& v) { return ToString(v); };
+  return ToString(values, converter);
 }
 
 #endif  // CPP_TEMPLATE_UTIL_H_
