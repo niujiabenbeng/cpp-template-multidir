@@ -6,6 +6,8 @@
 
 #include "common.h"
 
+///////////////////////////////// class Timer //////////////////////////////////
+
 class Timer {
  public:
   using SystemClock = std::chrono::system_clock;
