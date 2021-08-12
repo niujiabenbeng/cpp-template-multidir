@@ -3,7 +3,8 @@
 
 #include "util.h"
 
-int main(int argc, char *argv[]) {
+// NOLINTNEXTLINE(bugprone-exception-escape)
+int main(int argc, char* argv[]) {
   google::InitGoogleLogging(argv[0]);
   google::LogToStderr();
   google::ParseCommandLineFlags(&argc, &argv, true);

@@ -63,7 +63,7 @@ tools: $(TGT_TOOLS)
 
 tests: $(TGT_TESTS)
 
-all: $(TGT_SRC) $(TGT_TOOLS)
+all: $(TGT_SRC) $(TGT_TOOLS) $(TGT_TESTS)
 
 $(TGT_SRC): $(OBJ_SRC)
 	$(GG) -shared -o $@ $^ $(LIBRARY) $(LIBS)
@@ -89,4 +89,4 @@ endif
 clean:
 	rm -rf $(BUILDDIR)
 
-.PHONY: clean lib tools tests all
+.PHONY: lib tools tests all clean

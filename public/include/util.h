@@ -1,5 +1,5 @@
-#ifndef CPP_TEMPLATE_UTIL_H_
-#define CPP_TEMPLATE_UTIL_H_
+#ifndef PUBLIC_UTIL_H_
+#define PUBLIC_UTIL_H_
 
 #include "common.h"
 
@@ -13,7 +13,7 @@ std::string ReadFile(const std::string& file, bool is_binary = false);
 template <class T> std::vector<T> ReadLines(std::string& file);
 
 // 一次性写入文件的所有内容
-bool WriteFile(const std::string& file, const char* data, const int len);
+bool WriteFile(const std::string& file, const char* data, int length);
 bool WriteFile(const std::string& file, const std::string& content);
 bool WriteFile(const std::string& file, const std::vector<std::string>& lines);
 
@@ -115,4 +115,4 @@ template <class T> std::string ToString(const std::vector<T>& values) {
   return ToString(values, converter);
 }
 
-#endif  // CPP_TEMPLATE_UTIL_H_
+#endif  // PUBLIC_UTIL_H_

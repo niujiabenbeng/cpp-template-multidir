@@ -22,9 +22,9 @@ readability-*,
 -google-readability-casting,
 -modernize-use-nodiscard,
 -modernize-use-trailing-return-type,
--readability-avoid-const-params-in-decls,
 -readability-magic-numbers,
 -misc-no-recursion,
+-misc-non-private-member-variables-in-classes,
 '
 WarningsAsErrors: ''
 HeaderFilterRegex: '(!common\.h)'

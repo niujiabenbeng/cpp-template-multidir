@@ -50,11 +50,11 @@ std::string ReadFile(const std::string& file, bool is_binary) {
                      std::istreambuf_iterator<char>());
 }
 
-bool WriteFile(const std::string& file, const char* data, const int len) {
+bool WriteFile(const std::string& file, const char* data, int length) {
   MakeDirsForFile(file);
   std::ofstream outfile(file, std::ios_base::binary);
   if (!outfile.is_open()) { return false; }
-  outfile.write(data, len);
+  outfile.write(data, length);
   return true;
 }
 

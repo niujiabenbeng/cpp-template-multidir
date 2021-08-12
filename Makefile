@@ -20,4 +20,4 @@ tests:
 clean:
 	for MODULE in $(SUBMODULE); do $(MAKE) -C $$MODULE clean; done
 
-.PHONY: all lib tools tests clean
+.PHONY: lib all tools tests clean

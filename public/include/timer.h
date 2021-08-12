@@ -1,5 +1,5 @@
-#ifndef CPP_TEMPLATE_TIMER_H_
-#define CPP_TEMPLATE_TIMER_H_
+#ifndef PUBLIC_TIMER_H_
+#define PUBLIC_TIMER_H_
 
 #include <date/date.h>
 #include <date/tz.h>
@@ -172,7 +172,7 @@ class DateTime {
     return DateTime(TimePoint{sec});
   }
 
-  TimePoint value{SystemClock::now()};  // NOLINT
+  TimePoint value{SystemClock::now()};
 };
 
-#endif  // CPP_TEMPLATE_TIMER_H_
+#endif  // PUBLIC_TIMER_H_

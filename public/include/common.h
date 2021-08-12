@@ -1,5 +1,5 @@
-#ifndef CPP_TEMPLATE_COMMON_H_
-#define CPP_TEMPLATE_COMMON_H_
+#ifndef PUBLIC_COMMON_H_
+#define PUBLIC_COMMON_H_
 
 // convert macro to string
 #define STRINGIFY(m) #m
@@ -81,4 +81,4 @@
 
 namespace bf = boost::filesystem;  // NOLINT
 
-#endif  // CPP_TEMPLATE_COMMON_H_
+#endif  // PUBLIC_COMMON_H_
