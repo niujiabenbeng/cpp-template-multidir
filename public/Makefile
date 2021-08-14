@@ -88,5 +88,7 @@ endif
 
 clean:
 	rm -rf $(BUILDDIR)
+	find . -type f -name '*.4cf' -exec rm {} \;
+	find . -type f -name '*.4ct' -exec rm {} \;
 
 .PHONY: lib tools tests all clean
