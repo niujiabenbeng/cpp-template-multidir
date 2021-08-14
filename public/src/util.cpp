@@ -110,7 +110,7 @@ void WriteJsonFile(const Json::Value& root, const std::string& json_file) {
 
 std::string ExecShell(const std::string& cmd) {
   std::string result;
-  std::array<char, 128> buffer;
+  std::array<char, 128> buffer = {};
   FILE* pipe = popen(cmd.c_str(), "r");
   if (pipe == nullptr) {
     LOG(ERROR) << "popen() failed! " << strerror(errno);
@@ -136,7 +136,7 @@ std::vector<std::string> ListDirectory(const std::string& dirname,
 }
 
 std::string CalcMD5(const std::string& content) {
-  std::array<unsigned char, MD5_DIGEST_LENGTH> md5;
+  std::array<unsigned char, MD5_DIGEST_LENGTH> md5 = {};
   MD5((unsigned char*) content.data(), content.size(), md5.data());
   std::string result;
   for (const auto& c : md5) {
@@ -147,14 +147,12 @@ std::string CalcMD5(const std::string& content) {
 
 int64_t GetAvailableSpace(const std::string& path) {
   bf::path check_path(path);
-  // clang-format off
   if (bf::exists(check_path)) {
     return bf::space(check_path).available;
-  }
+  }  // NOFORMAT(-2:)
   if (check_path.has_parent_path()) {
     return GetAvailableSpace(check_path.parent_path().string());
   }
-  // clang-format on
   return -1;
 }
 
@@ -179,7 +177,6 @@ int64_t GetFileSize(const std::string& path) {
 }
 
 int64_t GetBytesByString(std::string content) {
-  // clang-format off
   const UnitValueVec map = {
     // 算法匹配最前面的pair, 所以这里顺序很重要
     {"kb", 1024},
@@ -189,45 +186,38 @@ int64_t GetBytesByString(std::string content) {
     {"k", 1024},
     {"m", 1024*1024},
     {"g", 1024*1024*1024},
-  };
-  // clang-format on
+  };  // NOFORMAT(-9:)
   return ParseUnitString(std::move(content), map);
 }
 
 std::string GetBytesString(int64_t bytes) {
-  // clang-format off
   const UnitValueVec map = {
     // 算法匹配最前面的pair, 所以这里顺序很重要
     {"GB", 1024*1024*1024},
     {"MB", 1024*1024},
     {"KB", 1024},
     {"B", 1},
-  };
-  // clang-format on
+  };  // NOFORMAT(-6:)
   return DumpUnitString(bytes, map);
 }
 
 int64_t GetSecondsByString(std::string content) {
-  // clang-format off
   const UnitValueVec map =  {
     {"s", 1},         {"sec",  1},
     {"m", 60},        {"min",  60},
     {"h", 60*60},     {"hour", 60*60},
     {"d", 24*60*60},  {"day",  24*60*60}
-  };
-  // clang-format on
+  };  // NOFORMAT(-5:)
   return ParseUnitString(std::move(content), map);
 }
 
 std::string GetSecondsString(int64_t seconds) {
-  // clang-format off
   const UnitValueVec map =  {
     // 算法匹配最前面的pair, 所以这里顺序很重要
     {"day",  24*60*60},
     {"hour", 60*60},
     {"min",  60},
     {"sec",  1}
-  };
-  // clang-format on
+  };  // NOFORMAT(-6:)
   return DumpUnitString(seconds, map);
 }

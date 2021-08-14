@@ -35,7 +35,7 @@ template <class T> class BlockingQueue {
       std::unique_lock<std::mutex> lock(mutex_);
       condition_push_.wait(lock, [this] {
         return (queue_.size() < capacity_) || aborted_;
-      });  // clang-format off/on
+      });  // NOFORMAT(-2:)
       if (aborted_) { return false; }
       queue_.push(std::move(value));
     }
@@ -47,7 +47,7 @@ template <class T> class BlockingQueue {
       std::unique_lock<std::mutex> lock(mutex_);
       condition_pop_.wait(lock, [this] {
         return (!queue_.empty()) || aborted_;
-      });  // clang-format off/on
+      });  // NOFORMAT(-2:)
       if (aborted_ && queue_.empty()) { return false; }
       value = std::move(queue_.front());
       queue_.pop();

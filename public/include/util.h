@@ -10,7 +10,7 @@ void MakeDirsForFile(const std::string& path);
 std::string ReadFile(const std::string& file, bool is_binary = false);
 
 // 按行读取文件内容, 需要T重载运算符: operator>>
-template <class T> std::vector<T> ReadLines(std::string& file);
+template <class T> std::vector<T> ReadLines(const std::string& file);
 
 // 一次性写入文件的所有内容
 bool WriteFile(const std::string& file, const char* data, int length);
@@ -73,7 +73,7 @@ std::string ToString(const std::vector<T>& values, C converter);
 
 //////////////////////////////// implementation ////////////////////////////////
 
-template <class T> std::vector<T> ReadLines(std::string& file) {
+template <class T> std::vector<T> ReadLines(const std::string& file) {
   std::ifstream infile(file);
   if (!infile.is_open()) { return std::vector<T>{}; }
   std::vector<T> samples;

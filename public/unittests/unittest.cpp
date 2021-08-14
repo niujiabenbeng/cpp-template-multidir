@@ -6,7 +6,9 @@
 #include "timer.h"
 #include "util.h"
 
-TEST(FileIOTest, fileio) {  // NOLINT
+// NOLINTGLOBAL(cppcoreguidelines-avoid-non-const-global-variables)
+
+TEST(FileIOTest, fileio) {
   auto tempfile = boost::filesystem::unique_path().string();
   std::vector<std::string> lines = {"hello", "world"};
   EXPECT_TRUE(WriteFile(tempfile, lines));
@@ -16,13 +18,13 @@ TEST(FileIOTest, fileio) {  // NOLINT
   }
 }
 
-TEST(ThreadPoolTest, pool) {  // NOLINT
+TEST(ThreadPoolTest, pool) {
   ThreadPool pool(4);
   auto result = pool.enqueue([](int answer) { return answer; }, 42);
   EXPECT_EQ(result.get(), 42);
 }
 
-TEST(JsonTest, json) {  // NOLINT
+TEST(JsonTest, json) {
   Json::Value root;
   root["one"] = 1;
   root["hello"] = "world";
@@ -36,20 +38,20 @@ TEST(JsonTest, json) {  // NOLINT
   }
 }
 
-TEST(DateTimeTest, datetime) {  // NOLINT
+TEST(DateTimeTest, datetime) {
   auto dt = DateTime().seconds();
   auto dt2 = DateTime(dt.string());
   EXPECT_TRUE(dt.value == dt2.value);
 }
 
-TEST(BytesTest, bytes) {  // NOLINT
+TEST(BytesTest, bytes) {
   EXPECT_EQ(GetBytesByString("512K"), GetBytesByString("0.5MB"));
   EXPECT_EQ(GetBytesByString("1024K"), GetBytesByString("1MB"));
   EXPECT_TRUE(GetBytesString(GetBytesByString("1M")) == "1.00 MB");
   EXPECT_TRUE(GetBytesString(GetBytesByString("0.5M")) == "512.00 KB");
 }
 
-TEST(SecondsTest, seconds) {  // NOLINT
+TEST(SecondsTest, seconds) {
   EXPECT_EQ(GetSecondsByString("24h"), GetSecondsByString("1day"));
   EXPECT_EQ(GetSecondsByString("12h"), GetSecondsByString("12 hour"));
   EXPECT_TRUE(GetSecondsString(GetSecondsByString("0.5D")) == "12.00 hour");
