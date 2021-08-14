@@ -66,15 +66,15 @@ class Timer {
 
   float AverageSeconds() {
     if (count_ <= 0) { return -1.0F; }
-    return this->TotalSeconds() / count_;
+    return this->TotalSeconds() / float(count_);
   }
   float AverageMilliSeconds() {
     if (count_ <= 0) { return -1.0F; }
-    return this->TotalMilliSeconds() / count_;
+    return this->TotalMilliSeconds() / float(count_);
   }
   float AverageMicroSeconds() {
     if (count_ <= 0) { return -1.0F; }
-    return this->TotalMicroSeconds() / count_;
+    return this->TotalMicroSeconds() / float(count_);
   }
 
   void Accumulate() {
@@ -122,7 +122,7 @@ class FrequencyCounter {
     count_ += times;
     auto elapsed = SystemClock::now() - stamp_;
     if (elapsed < interval_) { return default_value; }
-    auto result = (interval_ / elapsed) * count_;
+    auto result = float(interval_.count()) / float(elapsed.count()) * count_;
     this->Reset();
     return result;
   }

@@ -132,7 +132,9 @@ def run_clang_format(args):
             lines = [l for l in srcfile]
         file = os.path.abspath(file)
         noformat_ranges = _collect_noformat_ranges(lines)
-        _generate_modified_code(lines, noformat_ranges, f"{file}.4cf")
+        dirname, filename = os.path.split(file)
+        path = os.path.join(dirname, f".{filename}.4cf")
+        _generate_modified_code(lines, noformat_ranges, path)
         _format_cpp_file(file, len(lines), noformat_ranges)
 
 
