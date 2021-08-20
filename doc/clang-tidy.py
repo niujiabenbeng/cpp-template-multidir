@@ -170,7 +170,7 @@ def main():
     )
     parser.add_argument(
         "--save_modified",
-        action="store_false",
+        action="store_true",
         help="Flag to save modified file (.4ct format).",
     )
     args = parser.parse_args()

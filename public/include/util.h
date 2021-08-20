@@ -32,10 +32,6 @@ void WriteJsonFile(const Json::Value& root, const std::string& json_file);
 // 运行shell命令, 出错返回空字符串
 std::string ExecShell(const std::string& cmd);
 
-// vector to string, format控制单个value的格式
-template <class T>
-std::string ToString(const std::vector<T>& values, const std::string& format);
-
 // 返回目录中所有的文件和子目录, 结果做升序排列
 std::vector<std::string> ListDirectory(
     const std::string& dirname, const std::regex& pattern = std::regex(".*"));

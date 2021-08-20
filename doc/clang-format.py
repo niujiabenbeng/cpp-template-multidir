@@ -125,8 +125,8 @@ def run_clang_format(args):
         with open(file, "r") as srcfile:
             lines = [l for l in srcfile]
         file = os.path.abspath(file)
+        noformat_ranges = _collect_noformat_ranges(lines)
         if args.save_modified:
-            noformat_ranges = _collect_noformat_ranges(lines)
             dirname, filename = os.path.split(file)
             path = os.path.join(dirname, f".{filename}.4cf")
             _generate_modified_code(lines, noformat_ranges, path)
@@ -145,7 +145,7 @@ def main():
     )
     parser.add_argument(
         "--save_modified",
-        action="store_false",
+        action="store_true",
         help="Flag to save modified file (.4cf format).",
     )
     args = parser.parse_args()
