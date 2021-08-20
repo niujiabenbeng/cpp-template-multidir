@@ -81,6 +81,4 @@
 #include <jsoncpp/json/json.h>
 // clang-format on
 
-namespace bf = boost::filesystem;  // NOLINT
-
 #endif  // PUBLIC_COMMON_H_

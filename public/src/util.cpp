@@ -146,6 +146,7 @@ std::string CalcMD5(const std::string& content) {
 }
 
 int64_t GetAvailableSpace(const std::string& path) {
+  namespace bf = boost::filesystem;
   bf::path check_path(path);
   if (bf::exists(check_path)) {
     return bf::space(check_path).available;
@@ -159,6 +160,7 @@ int64_t GetAvailableSpace(const std::string& path) {
 int64_t GetFileSize(const std::string& path) {
   // linux系统中, 一个文件夹占4096个字节
   const int64_t empty_dir_size = 4096;
+  namespace bf = boost::filesystem;
   if (!bf::exists(path)) { return -1; }
   if (bf::is_regular_file(path)) { return bf::file_size(path); }
   if (bf::is_directory(path)) {
