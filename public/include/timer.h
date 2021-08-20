@@ -28,6 +28,10 @@ class Timer {
     has_run_once_ = true;
     has_accumulated_ = false;
   }
+  SystemClock::duration Elapsed() {
+    CHECK(is_running_) << "Timer is not started yet.";
+    return SystemClock::now() - start_;
+  }
 
   float Seconds() {
     using std::chrono::duration_cast;

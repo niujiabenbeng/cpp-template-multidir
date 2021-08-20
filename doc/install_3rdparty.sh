@@ -2,7 +2,7 @@
 
 cd $(dirname $0)
 
-THREADS=2
+THREADS=8
 ROOT=${PWD}
 CACHE=${ROOT}/.cache
 TOOLS=${HOME}/Documents/tools

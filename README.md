@@ -14,10 +14,8 @@ Makefile, 主目录的Makefile调用子目录的Makefile来完成编译任务.
 
 ### Useful tools
 
-1. 生成`compile_commands.json`: `bear make -ir -j4 all`
+1. 生成`compile_commands.json`: `bear make -ir all -j4`
 
-2. auto-formatting: `clang-format -i include/* src/* tools/* unittests/*`
+2. auto-formatting: `./doc/clang-tools.sh format`
 
-3. linting: `run-clang-tidy.py`
-
-注意: `run-clang-tidy.py`处理的是从`compile_commands.json`中的文件.
+3. linting: `./doc/clang-tools.sh lint`

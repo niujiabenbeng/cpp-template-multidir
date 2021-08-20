@@ -20,7 +20,7 @@ INCLUDE := ../3rdparty/boost/include \
 LIBRARY := ../3rdparty/boost/lib \
            ../3rdparty/opencv/lib \
            ../3rdparty/date/lib
-LIBS    := dl m z rt glog gflags curl crypto jsoncpp pthread date-tz \
+LIBS    := dl m z rt glog gflags crypto jsoncpp pthread date-tz \
            opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc \
            boost_system boost_filesystem
 
@@ -88,7 +88,5 @@ endif
 
 clean:
 	rm -rf $(BUILDDIR)
-	find . -type f -name '*.4cf' -exec rm {} \;
-	find . -type f -name '*.4ct' -exec rm {} \;
 
 .PHONY: lib tools tests all clean

@@ -9,12 +9,11 @@ clang-format本身不支持单行(单语句)设置, 这给实际使用带来了�
 扩展了原生的clang-format工具, 引入一个新的设置标记: NOFORMAT, 新的标记在
 设置单行(单语句)的情况下非常方便, 下面是几个使用NOFORMAT的示例:
 
-NOFORMAT:       忽略当前行.
+NOFORMAT(0):    忽略当前行.
 NOFORMAT(2):    忽略行号为2的行. 当前行行号为0, 负数往前数, 正数往后数.
 NOFORMAT(4:6):  忽略行号为4~6的行.
 NOFORMAT(-2:):  相当于: NOFORMAT(-2:0).
 NOFORMAT(:2):   相当于: NOFORMAT(0:2).
-NOFORMAT(:2,4): 相当于: NOFORMAT(0:2)和NOFORMAT(4).
 """
 
 import os
@@ -33,22 +32,20 @@ def _locate_dominate_file(root, name):
 
 
 def _parse_range_string(line_id, content):
-    """解析如下格式的字符串: `2,:3,4:,5:6`."""
-    def _parse_item(item):
-        if ":" not in item:
-            return int(item), int(item)
-        if item.startswith(":"):
-            return 0, int(item[1:])
-        if item.endswith(":"):
-            return int(item[:-1]), 0
-        return tuple([int(v) for v in item.split(":")])
+    """解析范围字符串."""
 
-    line_ranges = []
-    for item in content.split(","):
-        start, end = _parse_item(item)
-        assert start <= end, f"Wrong format: {content}"
-        line_ranges.append((start + line_id, end + line_id))
-    return line_ranges
+    def _parse_string(string):
+        if ":" not in string:
+            return int(string), int(string)
+        if string.startswith(":"):
+            return 0, int(string[1:])
+        if string.endswith(":"):
+            return int(string[:-1]), 0
+        return [int(v) for v in string.split(":")]
+
+    start, end = _parse_string(content)
+    assert start <= end, f"Wrong format: {content}"
+    return line_id + start, line_id + end
 
 
 def _flip_ranges(ranges, length):
@@ -74,16 +71,13 @@ def _collect_noformat_ranges(lines):
     """收集需要忽略的行."""
 
     noformat_ranges = []
-    pattern = re.compile(r"//NOFORMAT\((.+)\)")
+    pattern = re.compile(r"NOFORMAT\(([-0-9:]+)\)")
     for i, line in enumerate(lines):
-        line = line.strip().replace(" ", "")
         match = pattern.search(line)
-        if match:
-            content = match.group(1)
-            ranges = _parse_range_string(i, content)
-            noformat_ranges.extend(ranges)
-        elif f"//NOFORMAT" in line:
-            noformat_ranges.append((i, i))
+        if not match: continue
+        content = match.group(1)
+        ranges = _parse_range_string(i, content)
+        noformat_ranges.append(ranges)
 
     # 不允许每一个range之间有overlap
     noformat_ranges.sort(key=lambda x: x[0])
@@ -131,10 +125,11 @@ def run_clang_format(args):
         with open(file, "r") as srcfile:
             lines = [l for l in srcfile]
         file = os.path.abspath(file)
-        noformat_ranges = _collect_noformat_ranges(lines)
-        dirname, filename = os.path.split(file)
-        path = os.path.join(dirname, f".{filename}.4cf")
-        _generate_modified_code(lines, noformat_ranges, path)
+        if args.save_modified:
+            noformat_ranges = _collect_noformat_ranges(lines)
+            dirname, filename = os.path.split(file)
+            path = os.path.join(dirname, f".{filename}.4cf")
+            _generate_modified_code(lines, noformat_ranges, path)
         _format_cpp_file(file, len(lines), noformat_ranges)
 
 
@@ -147,6 +142,11 @@ def main():
         type=str,
         nargs="+",
         help="Path of c++ file to be auto-formatted.",
+    )
+    parser.add_argument(
+        "--save_modified",
+        action="store_false",
+        help="Flag to save modified file (.4cf format).",
     )
     args = parser.parse_args()
     run_clang_format(args)

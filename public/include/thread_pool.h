@@ -18,13 +18,13 @@ class ThreadPool {
  private:
   std::vector<std::thread> workers_;
   std::queue<std::function<void()>> tasks_;
-  std::mutex mutex_;
+  mutable std::mutex mutex_;
   std::condition_variable condition_;
-  bool stop_;
+  bool stop_{false};
 };
 
 // the constructor just launches some amount of workers
-inline ThreadPool::ThreadPool(int num_threads) : stop_(false) {
+inline ThreadPool::ThreadPool(int num_threads) {
   for (int i = 0; i < num_threads; ++i) {
     workers_.emplace_back([this] {
       while (true) {
@@ -61,10 +61,7 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
 
 // the destructor joins all threads
 inline ThreadPool::~ThreadPool() {
-  {
-    std::unique_lock<std::mutex> lock(mutex_);
-    stop_ = true;
-  }
+  ATOMIC_SET(mutex_, stop_, true);
   condition_.notify_all();
   for (std::thread& worker : workers_) { worker.join(); }
 }

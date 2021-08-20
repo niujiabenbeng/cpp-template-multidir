@@ -10,17 +10,18 @@ clang-tidy不支持文件范围的设置, 并且只能设置单行和下一行, 
 
 1. NOLINT(*):         原生设置, 忽略当前行, 括号内为指定检查项
 2. NOLINTNEXTLINE(*): 原生设置, 忽略下一行, 括号内为指定检查项
-3. NOLINTGLOBAL(*):   扩展设置, 忽略检查项, 括号内为指定检查项
+3. NOLINTFIELD(*):    扩展设置, 忽略检查项, 括号内为指定检查项
 4. NOLINTLINE(*):     扩展设置, 忽略指定行, 括号内为指定行范围(相对于当前行)
 
 下面是几个使用扩展设置的例子:
 
-NOLINTGLOBAL(misc-no-recursion): 全局忽略检查项: misc-no-recursion.
+NOLINTFIELD(misc-no-recursion): 忽略检查项: misc-no-recursion.
+NOLINTFIELD(all): 忽略所有检查项.
+NOLINTLINE(0):    忽略当前行.
 NOLINTLINE(2):    忽略行号为2的行. 当前行行号为0, 负数往前数, 正数往后数.
 NOLINTLINE(4:6):  忽略行号为4~6的行.
 NOLINTLINE(-2:):  相当于: NOLINTLINE(-2:0).
 NOLINTLINE(:2):   相当于: NOLINTLINE(0:2).
-NOLINTLINE(:2,4): 相当于: NOLINTLINE(0:2)和NOLINTLINE(4).
 """
 
 import os
@@ -81,9 +82,8 @@ def _collect_nolint_fields(lines):
     """收集需要忽略的检查项."""
 
     nolint_fields = set()
-    pattern = re.compile("//NOLINTGLOBAL\((.+)\)")
+    pattern = re.compile("NOLINTFIELD\((.+)\)")
     for line in lines:
-        line = line.strip().replace(" ", "")
         match = pattern.search(line)
         if not match: continue
         nolint_fields.update(match.group(1).split(","))
@@ -94,14 +94,13 @@ def _collect_nolint_ranges(lines):
     """收集需要忽略的行."""
 
     nolint_ranges = []
-    pattern = re.compile("//NOLINTLINE\((.+)\)")
+    pattern = re.compile(r"NOLINTLINE\(([-0-9:]+)\)")
     for i, line in enumerate(lines):
-        line = line.strip().replace(" ", "")
         match = pattern.search(line)
         if not match: continue
         content = match.group(1)
         ranges = _parse_range_string(i, content)
-        nolint_ranges.extend(ranges)
+        nolint_ranges.append(ranges)
 
     # 不允许每一个range之间有overlap
     nolint_ranges.sort(key=lambda x: x[0])
@@ -130,14 +129,12 @@ def _lint_cpp_file(file_path, file_length, global_fields, nolint_ranges):
     lines = _flip_ranges(nolint_ranges, file_length)
     line_filter = {"name": os.path.basename(file_path), "lines": lines}
     line_filter = json.dumps([line_filter]).replace(" ", "")
-    curr_dir = os.path.abspath(os.path.dirname(__file__))
-    config_file = os.path.join(curr_dir, "clang-tidy.cfg")
     assert _locate_dominate_file(file_path, "compile_commands.json")
+    assert _locate_dominate_file(file_path, ".clang-tidy")
 
     command = ["clang-tidy --quiet"]
     command.append(f"--checks='{checks}'")
     command.append(f"--line-filter='{line_filter}'")
-    command.append(f"--config-file='{config_file}'")
     command.append(file_path)
     command = " ".join(command)
     print(command)
@@ -154,9 +151,10 @@ def run_clang_tidy(args):
         nolint_fields = _collect_nolint_fields(lines)
         nolint_ranges = _collect_nolint_ranges(lines)
         if "all" in nolint_fields: continue
-        dirname, filename = os.path.split(file)
-        path = os.path.join(dirname, f".{filename}.4ct")
-        _generate_modified_code(lines, nolint_ranges, path)
+        if args.save_modified:
+            dirname, filename = os.path.split(file)
+            path = os.path.join(dirname, f".{filename}.4ct")
+            _generate_modified_code(lines, nolint_ranges, path)
         _lint_cpp_file(file, len(lines), nolint_fields, nolint_ranges)
 
 
@@ -169,6 +167,11 @@ def main():
         type=str,
         nargs="+",
         help="Path of c++ file to be linted.",
+    )
+    parser.add_argument(
+        "--save_modified",
+        action="store_false",
+        help="Flag to save modified file (.4ct format).",
     )
     args = parser.parse_args()
     run_clang_tidy(args)

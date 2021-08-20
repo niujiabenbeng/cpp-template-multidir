@@ -56,10 +56,7 @@ template <class T> class BlockingQueue {
     return true;
   }
   void abort() {
-    {
-      std::lock_guard<std::mutex> lock(mutex_);
-      aborted_ = true;
-    }
+    ATOMIC_SET(mutex_, aborted_, true);
     condition_pop_.notify_all();
     condition_push_.notify_all();
   }
@@ -73,7 +70,7 @@ template <class T> class BlockingQueue {
   bool aborted_ = false;
 };
 
-template <class T>  // 这里只能用using
+template <class T>  // NOLINT(:1)
 using BlockingQueuePtr = std::shared_ptr<BlockingQueue<T>>;
 
 #endif  // PUBLIC_BLOCKING_QUEUE_H_

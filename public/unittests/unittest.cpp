@@ -6,9 +6,9 @@
 #include "timer.h"
 #include "util.h"
 
-// NOLINTGLOBAL(cppcoreguidelines-avoid-non-const-global-variables)
-// NOLINTGLOBAL(cppcoreguidelines-special-member-functions)
-// NOLINTGLOBAL(cppcoreguidelines-pro-type-vararg)
+// NOLINTFIELD(cppcoreguidelines-avoid-non-const-global-variables)
+// NOLINTFIELD(cppcoreguidelines-pro-type-vararg)
+// NOLINTFIELD(cppcoreguidelines-special-member-functions)
 
 TEST(FileIOTest, fileio) {
   auto tempfile = boost::filesystem::unique_path().string();

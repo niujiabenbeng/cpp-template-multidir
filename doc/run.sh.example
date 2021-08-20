@@ -1,0 +1,11 @@
+#! /bin/bash
+
+cd $(dirname $0)
+
+export LD_LIBRARY_PATH=./3rdparty/date/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=./3rdparty/opencv/lib:$LD_LIBRARY_PATH
+
+# make all -j
+
+# ./public/build/tools/main.bin
+# ./public/build/unittests/unittest.bin

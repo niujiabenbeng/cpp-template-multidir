@@ -1,7 +1,7 @@
 #ifndef PUBLIC_COMMON_H_
 #define PUBLIC_COMMON_H_
 
-// NOLINTGLOBAL(bugprone-macro-parentheses)
+// NOLINTFIELD(bugprone-macro-parentheses)
 
 // convert macro to string
 #define STRINGIFY(m) #m
