@@ -70,7 +70,7 @@ template <class T> class BlockingQueue {
   bool aborted_ = false;
 };
 
-template <class T>  // NOLINT(:1)
+template <class T>  // NOFORMAT(:1)
 using BlockingQueuePtr = std::shared_ptr<BlockingQueue<T>>;
 
 #endif  // PUBLIC_BLOCKING_QUEUE_H_

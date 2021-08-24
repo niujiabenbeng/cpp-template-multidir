@@ -41,22 +41,20 @@ def _locate_dominate_file(root, name):
 
 
 def _parse_range_string(line_id, content):
-    """解析如下格式的字符串: `2,:3,4:,5:6`."""
-    def _parse_item(item):
-        if ":" not in item:
-            return int(item), int(item)
-        if item.startswith(":"):
-            return 0, int(item[1:])
-        if item.endswith(":"):
-            return int(item[:-1]), 0
-        return tuple([int(v) for v in item.split(":")])
+    """解析范围字符串."""
 
-    line_ranges = []
-    for item in content.split(","):
-        start, end = _parse_item(item)
-        assert start <= end, f"Wrong format: {content}"
-        line_ranges.append((start + line_id, end + line_id))
-    return line_ranges
+    def _parse_string(string):
+        if ":" not in string:
+            return int(string), int(string)
+        if string.startswith(":"):
+            return 0, int(string[1:])
+        if string.endswith(":"):
+            return int(string[:-1]), 0
+        return [int(v) for v in string.split(":")]
+
+    start, end = _parse_string(content)
+    assert start <= end, f"Wrong format: {content}"
+    return line_id + start, line_id + end
 
 
 def _flip_ranges(ranges, length):
