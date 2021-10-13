@@ -15,8 +15,6 @@ link_3rdparty() {
 }
 
 mkdir -p ${LIBRARY}
-link_3rdparty opencv
 link_3rdparty jpeg-turbo
-link_3rdparty mango
-link_3rdparty aliyun
+link_3rdparty opencv
 link_3rdparty date
